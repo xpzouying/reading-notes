@@ -12,7 +12,16 @@ const App = () => {
       .then((response) => response.text())
       .then((text) => setMarkdown(marked(text)))
       .catch((error) => console.error(error));
+
+    loadDefaultPage(); // 加载默认页面
   }, []);
+
+  const loadDefaultPage = () => {
+    fetch('/content/default.html')
+      .then(response => response.text())
+      .then(html => setHtmlContent(html))
+      .catch(error => console.error(error));
+  };
 
   // 处理超链接点击事件
   const handleLinkClick = (event) => {
@@ -30,8 +39,13 @@ const App = () => {
 
   return (
     <div className="App">
-      <div dangerouslySetInnerHTML={{ __html: markdown }} onClick={handleLinkClick}></div>
-      <div dangerouslySetInnerHTML={{ __html: htmlContent }}></div>
+      <div className="menu-bar">
+        <button onClick={loadDefaultPage}>首页</button>
+      </div>
+      <div className="content">
+        <div className="markdown-content" dangerouslySetInnerHTML={{ __html: markdown }} onClick={handleLinkClick} />
+        <div className="html-content" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+      </div>
     </div>
   );
 };
