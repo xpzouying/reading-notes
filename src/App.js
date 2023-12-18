@@ -26,14 +26,19 @@ const App = () => {
   // 处理超链接点击事件
   const handleLinkClick = (event) => {
     event.preventDefault();
-    const href = event.target.getAttribute('href');
 
-    // 如果链接指向的是 content 文件夹下的 HTML 文件
-    if (href.startsWith('./content/')) {
-      fetch(href)
-        .then((response) => response.text())
-        .then((html) => setHtmlContent(html))
-        .catch((error) => console.error(error));
+    // 确保事件的目标是一个超链接并且具有 href 属性
+    const target = event.target;
+    if (target.tagName === 'A' && target.href) {
+      const href = target.getAttribute('href');
+
+      // 现在我们可以安全地检查 href 是否以特定字符串开头
+      if (href && href.startsWith('./content/')) {
+        fetch(href)
+          .then((response) => response.text())
+          .then((html) => setHtmlContent(html))
+          .catch((error) => console.error(error));
+      }
     }
   };
 
