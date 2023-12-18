@@ -1,25 +1,39 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import { marked } from 'marked';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [markdown, setMarkdown] = useState('');
+  const [htmlContent, setHtmlContent] = useState('');
+
+  // 加载 README.md 文件
+  useEffect(() => {
+    fetch('/README.md')
+      .then((response) => response.text())
+      .then((text) => setMarkdown(marked(text)))
+      .catch((error) => console.error(error));
+  }, []);
+
+  // 处理超链接点击事件
+  const handleLinkClick = (event) => {
+    event.preventDefault();
+    const href = event.target.getAttribute('href');
+
+    // 如果链接指向的是 content 文件夹下的 HTML 文件
+    if (href.startsWith('./content/')) {
+      fetch(href)
+        .then((response) => response.text())
+        .then((html) => setHtmlContent(html))
+        .catch((error) => console.error(error));
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div dangerouslySetInnerHTML={{ __html: markdown }} onClick={handleLinkClick}></div>
+      <div dangerouslySetInnerHTML={{ __html: htmlContent }}></div>
     </div>
   );
-}
+};
 
 export default App;
